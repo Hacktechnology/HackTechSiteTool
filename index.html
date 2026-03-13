@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackTech Pro v3.0</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #00d4ff;
+            --bg: #080808;
+            --card-bg: #121212;
+            --btn-bg: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 10px;
+        }
+
+        .brand-header { text-align: center; margin-bottom: 15px; }
+        .brand-header h2 { font-weight: 900; color: var(--accent); letter-spacing: 2px; font-size: 1.4rem; }
+
+        /* DASHBOARD GRID 3x3 */
+        .nav-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            background: var(--btn-bg);
+            border: 1px solid #252525;
+            border-radius: 12px;
+            padding: 12px 2px;
+            color: #777;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-link i { font-size: 1.2rem; }
+
+        .nav-link.active {
+            background: #000;
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* CONTENEDOR MÓDULOS */
+        .module-card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h5 { color: var(--accent); font-size: 0.9rem; font-weight: 800; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+
+        label { font-size: 0.65rem; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; display: block; }
+
+        .form-control, .form-select {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus { border-color: var(--accent); box-shadow: none; background: #000; color: #fff; }
+
+        .btn-calc {
+            background: var(--accent);
+            color: #000;
+            font-weight: 800;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        /* RESULTADOS PROFESIONALES */
+        .res-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #333;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .res-label { font-size: 0.7rem; color: #888; display: block; }
+        .res-val { font-size: 1.5rem; font-weight: 900; color: #fff; }
+
+        .ok { border-color: #28a745; background: rgba(40, 167, 69, 0.1); }
+        .warn { border-color: #dc3545; background: rgba(220, 53, 69, 0.1); }
+
+        .footer-btns { display: flex; gap: 10px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="brand-header">
+        <h2>HACKTECH <span style="font-weight: 200; color: #fff;">PRO</span></h2>
+    </div>
+
+    <div class="nav nav-dashboard" role="tablist">
+        <a class="nav-link active" data-bs-toggle="pill" href="#m-poe"><i>⚡</i>PoE</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-wa"><i>🔌</i>W a A</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-red"><i>🌐</i>Red</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-hdd"><i>💾</i>Disco</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-len"><i>👁️</i>Lente</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-cam"><i>📸</i>Cáms</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-ups"><i>🔋</i>UPS</a>
+        <a class="nav-link" data-bs-toggle="pill" href="#m-vlt"><i>📉</i>Volt</a>
+        <a class="nav-link" href="#" onclick="location.reload()" style="background:#2a1010;"><i>🔄</i>Reset</a>
+    </div>
+
+    <div class="module-card tab-content">
+        
+        <div class="tab-pane fade show active" id="m-poe">
+            <h5>Analizador PoE</h5>
+            <label>N° de Cámaras</label>
+            <input type="number" id="poe_c" class="form-control" placeholder="Ej: 8">
+            <label>Watts x Cámara (Avg)</label>
+            <input type="number" id="poe_w" class="form-control" value="7.5">
+            <label>Capacidad Switch (W)</label>
+            <input type="number" id="poe_s" class="form-control" placeholder="Ej: 120">
+            <button class="btn-calc" onclick="runPoE()">Calcular Carga</button>
+            <div id="res_poe" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-wa">
+            <h5>Conversor W a Amperios</h5>
+            <label>Consumo Total (Watts)</label>
+            <input type="number" id="wa_w" class="form-control">
+            <label>Voltaje de Salida</label>
+            <select id="wa_v" class="form-select">
+                <option value="12">12V (CCTV)</option>
+                <option value="24">24V</option>
+                <option value="48">48V (PoE)</option>
+            </select>
+            <button class="btn-calc" onclick="runWA()">Calcular Amperaje</button>
+            <div id="res_wa" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-red">
+            <h5>Ancho de Banda</h5>
+            <label>Cámaras</label>
+            <input type="number" id="red_c" class="form-control">
+            <label>Calidad (Bitrate Mbps)</label>
+            <select id="red_b" class="form-select">
+                <option value="1">SD (1 Mbps)</option>
+                <option value="2.5">HD 1080p (2.5 Mbps)</option>
+                <option value="4.5">4K (4.5 Mbps)</option>
+            </select>
+            <button class="btn-calc" onclick="runRed()">Calcular Subida</button>
+            <div id="res_red" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-hdd">
+            <h5>Cálculo de Disco Duro</h5>
+            <label>Días requeridos</label>
+            <input type="number" id="hdd_d" class="form-control">
+            <label>Calidad</label>
+            <select id="hdd_q" class="form-select">
+                <option value="25">1080p</option>
+                <option value="50">4MP</option>
+            </select>
+            <button class="btn-calc" onclick="runHDD()">Calcular Capacidad</button>
+            <div id="res_hdd" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-len">
+            <h5>Visión del Lente</h5>
+            <label>Distancia al objetivo (m)</label>
+            <input type="number" id="len_d" class="form-control">
+            <label>Lente (mm)</label>
+            <select id="len_m" class="form-select">
+                <option value="2.8">2.8mm (90°)</option>
+                <option value="3.6">3.6mm (75°)</option>
+            </select>
+            <button class="btn-calc" onclick="runLen()">Ver Cobertura</button>
+            <div id="res_len" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-cam">
+            <h5>Cámaras x Disco</h5>
+            <label>Tamaño Disco (TB)</label>
+            <input type="number" id="cam_t" class="form-control">
+            <label>Días Meta</label>
+            <input type="number" id="cam_d" class="form-control">
+            <button class="btn-calc" onclick="runCam()">Calcular Cantidad</button>
+            <div id="res_cam" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-ups">
+            <h5>Autonomía UPS</h5>
+            <label>Carga Total (W)</label>
+            <input type="number" id="ups_w" class="form-control">
+            <label>Capacidad UPS (VA)</label>
+            <input type="number" id="ups_v" class="form-control">
+            <button class="btn-calc" onclick="runUPS()">Ver Autonomía</button>
+            <div id="res_ups" class="res-container d-none"></div>
+        </div>
+
+        <div class="tab-pane fade" id="m-vlt">
+            <h5>Caída de Voltaje</h5>
+            <label>Distancia (Metros)</label>
+            <input type="number" id="vlt_m" class="form-control">
+            <button class="btn-calc" onclick="runVlt()">Verificar Pérdida</button>
+            <div id="res_vlt" class="res-container d-none"></div>
+        </div>
+
+    </div>
+
+    <div class="footer-btns">
+        <button class="btn btn-success w-100 py-3 fw-bold" onclick="sendWS()">GENERAR REPORTE</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function output(id, label, val, isOk) {
+            const r = document.getElementById(id);
+            r.classList.remove('d-none', 'ok', 'warn');
+            r.classList.add(isOk ? 'ok' : 'warn');
+            r.innerHTML = `<span class="res-label">${label}</span><span class="res-val">${val}</span>`;
+        }
+
+        function runPoE() {
+            let total = document.getElementById('poe_c').value * document.getElementById('poe_w').value;
+            let cap = document.getElementById('poe_s').value;
+            output('res_poe', 'Consumo Total', total + ' Watts', total < cap);
+        }
+
+        function runWA() {
+            let res = (document.getElementById('wa_w').value / document.getElementById('wa_v').value).toFixed(2);
+            output('res_wa', 'Amperaje Necesario', res + ' Amp', true);
+        }
+
+        function runRed() {
+            let res = (document.getElementById('red_c').value * document.getElementById('red_b').value).toFixed(1);
+            output('res_red', 'Subida Requerida', res + ' Mbps', res < 20);
+        }
+
+        function runHDD() {
+            let res = (document.getElementById('hdd_d').value * 40 / 1024).toFixed(2);
+            output('res_hdd', 'Disco Sugerido', res + ' TB', true);
+        }
+
+        function runLen() {
+            let res = (document.getElementById('len_d').value * 0.8).toFixed(1);
+            output('res_len', 'Ancho de Cobertura', res + ' Metros', true);
+        }
+
+        function runCam() {
+            let res = Math.floor((document.getElementById('cam_t').value * 1024) / (document.getElementById('cam_d').value * 30));
+            output('res_cam', 'Cámaras Soportadas', res + ' Unidades', true);
+        }
+
+        function runUPS() {
+            let min = Math.floor((document.getElementById('ups_v').value * 0.6 / document.getElementById('ups_w').value) * 60 * 0.5);
+            output('res_ups', 'Tiempo de Respaldo', min + ' Minutos', min > 10);
+        }
+
+        function runVlt() {
+            let v = (12 - (document.getElementById('vlt_m').value * 0.04)).toFixed(1);
+            output('res_vlt', 'Voltaje en Extremo', v + 'V', v > 10.8);
+        }
+
+        function sendWS() {
+            alert("Reporte de ingeniería listo para enviar a WhatsApp.");
+        }
+    </script>
+</body>
+  </html>
+  
